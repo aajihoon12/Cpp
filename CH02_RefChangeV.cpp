@@ -6,7 +6,9 @@ void ChangeByRef(int &ref) {
 }
 
 void ChangeByRef2(int &ref) {
-    ref *= -1;
+    ref *=
+    
+     -1;
 }
 
 main() {
