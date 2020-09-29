@@ -12,12 +12,15 @@ public:
         myMoney=money;
     }
     int SaleApples(int money) {
+        if(money < 0)
+            return;
+
         int num = money/APPLE_PRICE;
         numOfAppels-=num;
         myMoney+=money;
         return num;
     }
-    void ShowSalesResult() {
+    void ShowSalesResult() const {
         cout<<"남은 사과: "<<numOfAppels<<endl;
         cout<<"판매 수익: "<<myMoney<<endl;
     }
@@ -36,7 +39,7 @@ public:
         numOfApples += seller.SaleApples(money);
         myMoney-=money;
     }
-    void ShowBuyResult() {
+    void ShowBuyResult() const {
         cout<<"현재 잔액: "<<myMoney<<endl;
         cout<<"사과 개수: "<<numOfApples<<endl;
     }
