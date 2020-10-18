@@ -1,35 +1,14 @@
 /*
- * Banking System Ver 0.1
+ * Banking System Ver 0.2
  * 작성자: 윤성우
- * 내  용: OOP 단계별 프로젝트의 기본 틀 구성
+ * 내  용: Account 클래스 정의, 객체 포인터 배열 적용
  */
 
 #include <iostream>
 #include <cstring>
 
 using namespace std;
-namespace BAK {
-	enum {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
-
-	void SelectMenu(int choice) {
-		switch(choice) {
-		case MAKE:
-			MakeAccount();
-			break;
-		case DEPOSIT:
-			DepositMoney();
-			break;
-		case WITHDRAW:
-			WithdrawMoney();
-			break;
-		case INQUIRE:
-			ShowAllAccInfo();
-			break;
-		default:
-			cout<<"Illegal selection.."<<endl;
-		}
-	}
-}
+const int NAME_LEN=20;
 
 void ShowMenu(void);       // 메뉴출력
 void MakeAccount(void);    // 계좌개설을 위한 함수
@@ -37,22 +16,50 @@ void DepositMoney(void);       // 입    금
 void WithdrawMoney(void);      // 출    금
 void ShowAllAccInfo(void);     // 잔액조회
 
-class Account {
-	int accID;
-	int balance;
-	char * cusName;
+enum {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
+
+class Account
+{
+private:
+	int accID;      // 계좌번호
+	int balance;    // 잔    액
+	char * cusName;   // 고객이름
+
 public:
-	Account(int id, int money, char * name) : accID(id), balance(money) {
+	Account(int ID, int money, char * name)
+		: accID(ID), balance(money)
+	{
 		cusName=new char[strlen(name)+1];
 		strcpy(cusName, name);
 	}
-	int GetID() const;
-	void DepositMoney(int money);
-	void WithdrawMoney(int money);
-	void ShowAccInfo() const;
-	~Account() {
-		delete cusName;
+
+	int GetAccID() { return accID; }
+
+	void Deposit(int money)
+	{
+		balance+=money;
 	}
+
+	int Withdraw(int money)    // 출금액 반환, 부족 시 0
+	{
+		if(balance<money)
+			return 0;
+		
+		balance-=money;
+		return money;
+	}
+
+	void ShowAccInfo()
+	{
+		cout<<"계좌ID: "<<accID<<endl;
+		cout<<"이  름: "<<cusName<<endl;
+		cout<<"잔  액: "<<balance<<endl;
+	}
+
+	~Account()
+	{
+		delete []cusName;
+	}	
 };
 
 Account * accArr[100];   // Account 저장을 위한 배열
@@ -68,9 +75,30 @@ int main(void)
 		cout<<"선택: "; 
 		cin>>choice;
 		cout<<endl;
-
-		BAK::SelectMenu(choice);
+		
+		switch(choice)
+		{
+		case MAKE:
+			MakeAccount(); 
+			break;
+		case DEPOSIT:
+			DepositMoney(); 
+			break;
+		case WITHDRAW: 
+			WithdrawMoney(); 
+			break;
+		case INQUIRE:
+			ShowAllAccInfo(); 
+			break;
+		case EXIT:
+			return 0;
+		default:
+			cout<<"Illegal selection.."<<endl;
+		}
 	}
+
+	for(int i=0; i<accNum; i++)
+		delete accArr[i];
 	return 0;
 }
 
@@ -87,7 +115,7 @@ void ShowMenu(void)
 void MakeAccount(void) 
 {
 	int id;
-	char * name;
+	char name[NAME_LEN];
 	int balance;
 	
 	cout<<"[계좌개설]"<<endl;
@@ -95,10 +123,8 @@ void MakeAccount(void)
 	cout<<"이  름: ";	cin>>name;
 	cout<<"입금액: ";	cin>>balance;
 	cout<<endl;
-	
-	Account * aptr = new Account(id, balance, name);
-	accArr[accNum] = aptr;
-	accNum++;
+
+	accArr[accNum++]=new Account(id, balance, name);
 }
 
 void DepositMoney(void)
@@ -111,9 +137,10 @@ void DepositMoney(void)
 	
 	for(int i=0; i<accNum; i++)
 	{
-		if(accArr[i]->GetID()==id)
+		if(accArr[i]->GetAccID()==id)
 		{
-			accArr[i]->DepositMoney(money);
+			accArr[i]->Deposit(money);
+			cout<<"입금완료"<<endl<<endl;
 			return;
 		}
 	}
@@ -130,9 +157,15 @@ void WithdrawMoney(void)
 	
 	for(int i=0; i<accNum; i++)
 	{
-		if(accArr[i]->GetID()==id)
+		if(accArr[i]->GetAccID()==id)
 		{
-			accArr[i]->WithdrawMoney(money);
+			if(accArr[i]->Withdraw(money)==0)
+			{
+				cout<<"잔액부족"<<endl<<endl;
+				return;
+			}
+
+			cout<<"출금완료"<<endl<<endl;
 			return;
 		}
 	}
@@ -144,26 +177,6 @@ void ShowAllAccInfo(void)
 	for(int i=0; i<accNum; i++)
 	{
 		accArr[i]->ShowAccInfo();
+		cout<<endl;
 	}
-}
-
-int Account::GetID() const {
-	return accID;
-}
-void Account::DepositMoney(int money) {
-	balance+=money;
-	cout<<"입금완료"<<endl<<endl;
-}
-void Account::WithdrawMoney(int money){
-	if(balance < money)
-		cout<<"잔액부족"<<endl<<endl;
-	else{
-		balance-=money;
-		cout<<"출금완료"<<endl<<endl;	
-	}
-}
-void Account::ShowAccInfo() const {
-	cout<<"계좌ID: "<<accID<<endl;
-	cout<<"이 름: "<<cusName<<endl;
-	cout<<"잔 액: "<<balance<<endl;
 }
