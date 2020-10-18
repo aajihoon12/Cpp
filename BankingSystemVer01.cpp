@@ -8,7 +8,28 @@
 #include <cstring>
 
 using namespace std;
-const int NAME_LEN=20;
+namespace BAK {
+	enum {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
+
+	void SelectMenu(int choice) {
+		switch(choice) {
+		case MAKE:
+			MakeAccount();
+			break;
+		case DEPOSIT:
+			DepositMoney();
+			break;
+		case WITHDRAW:
+			WithdrawMoney();
+			break;
+		case INQUIRE:
+			ShowAllAccInfo();
+			break;
+		default:
+			cout<<"Illegal selection.."<<endl;
+		}
+	}
+}
 
 void ShowMenu(void);       // 메뉴출력
 void MakeAccount(void);    // 계좌개설을 위한 함수
@@ -16,16 +37,25 @@ void DepositMoney(void);       // 입    금
 void WithdrawMoney(void);      // 출    금
 void ShowAllAccInfo(void);     // 잔액조회
 
-enum {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
+class Account {
+	int accID;
+	int balance;
+	char * cusName;
+public:
+	Account(int id, int money, char * name) : accID(id), balance(money) {
+		cusName=new char[strlen(name)+1];
+		strcpy(cusName, name);
+	}
+	int GetID() const;
+	void DepositMoney(int money);
+	void WithdrawMoney(int money);
+	void ShowAccInfo() const;
+	~Account() {
+		delete cusName;
+	}
+};
 
-typedef struct 
-{
-	int accID;      // 계좌번호
-	int balance;    // 잔    액
-	char cusName[NAME_LEN];   // 고객이름
-} Account;
-
-Account accArr[100];   // Account 저장을 위한 배열
+Account * accArr[100];   // Account 저장을 위한 배열
 int accNum=0;        // 저장된 Account 수
 
 int main(void)
@@ -38,26 +68,8 @@ int main(void)
 		cout<<"선택: "; 
 		cin>>choice;
 		cout<<endl;
-		
-		switch(choice)
-		{
-		case MAKE:
-			MakeAccount(); 
-			break;
-		case DEPOSIT:
-			DepositMoney(); 
-			break;
-		case WITHDRAW: 
-			WithdrawMoney(); 
-			break;
-		case INQUIRE:
-			ShowAllAccInfo(); 
-			break;
-		case EXIT:
-			return 0;
-		default:
-			cout<<"Illegal selection.."<<endl;
-		}
+
+		BAK::SelectMenu(choice);
 	}
 	return 0;
 }
@@ -75,7 +87,7 @@ void ShowMenu(void)
 void MakeAccount(void) 
 {
 	int id;
-	char name[NAME_LEN];
+	char * name;
 	int balance;
 	
 	cout<<"[계좌개설]"<<endl;
@@ -84,9 +96,8 @@ void MakeAccount(void)
 	cout<<"입금액: ";	cin>>balance;
 	cout<<endl;
 	
-	accArr[accNum].accID=id;
-	accArr[accNum].balance=balance;
-	strcpy(accArr[accNum].cusName, name);
+	Account * aptr = new Account(id, balance, name);
+	accArr[accNum] = aptr;
 	accNum++;
 }
 
@@ -100,10 +111,9 @@ void DepositMoney(void)
 	
 	for(int i=0; i<accNum; i++)
 	{
-		if(accArr[i].accID==id)
+		if(accArr[i]->GetID()==id)
 		{
-			accArr[i].balance+=money;
-			cout<<"입금완료"<<endl<<endl;
+			accArr[i]->DepositMoney(money);
 			return;
 		}
 	}
@@ -120,16 +130,9 @@ void WithdrawMoney(void)
 	
 	for(int i=0; i<accNum; i++)
 	{
-		if(accArr[i].accID==id)
+		if(accArr[i]->GetID()==id)
 		{
-			if(accArr[i].balance<money)
-			{
-				cout<<"잔액부족"<<endl<<endl;
-				return;
-			}
-
-			accArr[i].balance-=money;
-			cout<<"출금완료"<<endl<<endl;
+			accArr[i]->WithdrawMoney(money);
 			return;
 		}
 	}
@@ -140,8 +143,27 @@ void ShowAllAccInfo(void)
 {
 	for(int i=0; i<accNum; i++)
 	{
-		cout<<"계좌ID: "<<accArr[i].accID<<endl;
-		cout<<"이  름: "<<accArr[i].cusName<<endl;
-		cout<<"잔  액: "<<accArr[i].balance<<endl<<endl;
+		accArr[i]->ShowAccInfo();
 	}
+}
+
+int Account::GetID() const {
+	return accID;
+}
+void Account::DepositMoney(int money) {
+	balance+=money;
+	cout<<"입금완료"<<endl<<endl;
+}
+void Account::WithdrawMoney(int money){
+	if(balance < money)
+		cout<<"잔액부족"<<endl<<endl;
+	else{
+		balance-=money;
+		cout<<"출금완료"<<endl<<endl;	
+	}
+}
+void Account::ShowAccInfo() const {
+	cout<<"계좌ID: "<<accID<<endl;
+	cout<<"이 름: "<<cusName<<endl;
+	cout<<"잔 액: "<<balance<<endl;
 }
