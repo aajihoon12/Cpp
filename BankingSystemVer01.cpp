@@ -21,7 +21,7 @@ enum {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
 class Account
 {
 private:
-	int accID;      // °èÁÂ¹øÈ£
+	const int accID;      // °èÁÂ¹øÈ£
 	int balance;    // ÀÜ    ¾×
 	char * cusName;   // °í°´ÀÌ¸§
 
@@ -37,7 +37,7 @@ public:
 		strcpy(cusName, copy.cusName);
 	}
 
-	int GetAccID() { return accID; }
+	int GetAccID() const { return accID; }
 
 	void Deposit(int money)
 	{
@@ -53,8 +53,7 @@ public:
 		return money;
 	}
 
-	void ShowAccInfo()
-	{
+	void ShowAccInfo() const {
 		cout<<"°èÁÂID: "<<accID<<endl;
 		cout<<"ÀÌ  ¸§: "<<cusName<<endl;
 		cout<<"ÀÜ  ¾×: "<<balance<<endl;
