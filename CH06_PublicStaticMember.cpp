@@ -1,0 +1,23 @@
+#include <iostream>
+using namespace std;
+
+class SoSimple {
+public:
+    static int simObjCnt;
+public: //ÇÔ¼ö¿Í ¸â¹öÀÇ ±¸ºÐ
+    SoSimple() {
+        simObjCnt++;
+    }
+};
+int SoSimple::simObjCnt = 0;
+
+main() {
+    cout<<SoSimple::simObjCnt<<"¹øÂ° SoSimple °´Ã¼"<<endl;
+    SoSimple sim1;
+    SoSimple sim2;
+
+    cout<<SoSimple::simObjCnt<<"¹øÂ° SoSimple °´Ã¼"<<endl;
+    cout<<sim1.simObjCnt<<"¹øÂ° SoSimple °´Ã¼"<<endl;
+    cout<<sim2.simObjCnt<<"¹øÂ° SoSimple °´Ã¼"<<endl;
+    return 0;
+}
