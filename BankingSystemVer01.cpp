@@ -1,8 +1,7 @@
 /*
- * Banking System Ver 0.5
+ * Banking System Ver 0.6
  * 작성자: 윤성우
- * 내  용: AccManager라는 이름의 컨트롤 클래스 정의
- *         멤버함수를 클래스 외부에 정의
+ * 내  용: 이자관련 계좌 클래스의 추가 
  */
 
 #include <iostream>
@@ -11,8 +10,14 @@
 using namespace std;
 const int NAME_LEN=20;
 
+// 프로그램 사용자의 선택 메뉴
 enum {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
 
+// 신용등급
+enum {LEVEL_A=7, LEVEL_B=4, LEVEL_C=2};
+
+// 계좌의 종류
+enum {NORMAL=1, CREDIT=2};
 
 /* 
  * 클래스 이름: Account
@@ -31,7 +36,7 @@ public:
 	Account(const Account & ref);
 
 	int GetAccID() const;
-	void Deposit(int money);
+	virtual void Deposit(int money);
 	int Withdraw(int money) ;
 	void ShowAccInfo() const ;
 	~Account();
@@ -81,6 +86,50 @@ Account::~Account()
 
 
 /* 
+ * 클래스 이름: NormalAccount
+ * 클래스 유형: Entity 클래스
+ */
+
+class NormalAccount : public Account
+{
+private:
+	int interRate;   // 이자율 %단위
+public:
+	NormalAccount(int ID, int money, char * name, int rate)
+		: Account(ID, money, name), interRate(rate)
+	{  }
+
+	virtual void Deposit(int money)
+	{
+		Account::Deposit(money);        // 원금추가
+		Account::Deposit(money*(interRate/100.0));   // 이자추가
+	}
+};
+
+
+/* 
+ * 클래스 이름: HighCreditAccount
+ * 클래스 유형: Entity 클래스
+ */
+
+class HighCreditAccount : public NormalAccount
+{
+private:
+	int specialRate;
+public:
+	HighCreditAccount(int ID, int money, char * name, int rate, int special)
+		: NormalAccount(ID, money, name, rate), specialRate(special)
+	{  }
+	
+	virtual void Deposit(int money)
+	{
+		NormalAccount::Deposit(money);        // 원금과 이자추가 
+		Account::Deposit(money*(specialRate/100.0));   // 특별이자추가
+	}
+};
+
+
+/* 
  * 클래스 이름: AccountHandler
  * 클래스 유형: 컨트롤(Control) 클래스
  */
@@ -99,6 +148,10 @@ public:
 	void WithdrawMoney(void);
 	void ShowAllAccInfo(void) const;
 	~AccountHandler();
+
+protected:
+	void MakeNormalAccount(void);
+	void MakeCreditAccount(void);
 };
 
 void AccountHandler::ShowMenu(void) const
@@ -113,18 +166,65 @@ void AccountHandler::ShowMenu(void) const
 
 void AccountHandler::MakeAccount(void)
 {
+	int sel;
+	cout<<"[계좌종류선택]"<<endl;
+	cout<<"1.보통예금계좌 ";
+	cout<<"2.신용신뢰계좌 "<<endl;
+	cout<<"선택: ";
+	cin>>sel;
+	
+	if(sel==NORMAL)
+		MakeNormalAccount();
+	else
+		MakeCreditAccount();
+}
+
+void AccountHandler::MakeNormalAccount(void)
+{
 	int id;
 	char name[NAME_LEN];
 	int balance;
-	
-	cout<<"[계좌개설]"<<endl;
+	int interRate;
+
+	cout<<"[보통예금계좌 개설]"<<endl;
 	cout<<"계좌ID: ";	cin>>id;
 	cout<<"이  름: ";	cin>>name;
 	cout<<"입금액: ";	cin>>balance;
+	cout<<"이자율: ";	cin>>interRate;
 	cout<<endl;
 
-	accArr[accNum++]=new Account(id, balance, name);
+	accArr[accNum++]=new NormalAccount(id, balance, name, interRate);
 }
+
+void AccountHandler::MakeCreditAccount(void)
+{
+	int id;
+	char name[NAME_LEN];
+	int balance;
+	int interRate;
+	int creditLevel;
+
+	cout<<"[신용신뢰계좌 개설]"<<endl;
+	cout<<"계좌ID: ";	cin>>id;
+	cout<<"이  름: ";	cin>>name;
+	cout<<"입금액: ";	cin>>balance;
+	cout<<"이자율: ";	cin>>interRate;
+	cout<<"신용등급(1toA, 2toB, 3toC): ";	cin>>creditLevel;
+	cout<<endl;
+
+	switch(creditLevel)
+	{
+	case 1:
+		accArr[accNum++]=new HighCreditAccount(id, balance, name, interRate, LEVEL_A);
+		break;
+	case 2:
+		accArr[accNum++]=new HighCreditAccount(id, balance, name, interRate, LEVEL_B);
+		break;
+	case 3:
+		accArr[accNum++]=new HighCreditAccount(id, balance, name, interRate, LEVEL_C);
+	}
+}
+
 
 void AccountHandler::DepositMoney(void)
 {
@@ -191,7 +291,7 @@ AccountHandler::~AccountHandler()
 
 
 /* 
- * 컨트롤 클래스 AccountHandler 중심으로 변경된 main 함수
+ * 컨트롤 클래스 AccountHandler 중심의 main 함수
  */
 
 int main(void)
@@ -226,6 +326,5 @@ int main(void)
 			cout<<"Illegal selection.."<<endl;
 		}
 	}
-
 	return 0;
 }
