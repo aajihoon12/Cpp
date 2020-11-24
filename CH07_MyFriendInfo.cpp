@@ -18,7 +18,7 @@ public:
     }
 };
 
-class MyFriendDetailInfo() : public MyFriendInfo() {
+class MyFriendDetailInfo : public MyFriendInfo() {
     char * addr;
     char * phone;
 public:
