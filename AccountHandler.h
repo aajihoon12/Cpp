@@ -1,5 +1,5 @@
 #include "Account.h"
-
+#include "AccountArray.h"
 /* 
  * 클래스 이름: AccountHandler
  * 클래스 유형: 컨트롤(Control) 클래스
@@ -8,9 +8,8 @@
 class AccountHandler
 {
 private:
-	Account * accArr[100];
+	AccountArray accArr;
 	int accNum;
-
 public:
 	AccountHandler();
 	void ShowMenu(void) const;

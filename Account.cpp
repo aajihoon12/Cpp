@@ -37,3 +37,13 @@ void Account::ShowAccInfo() const
 	cout<<"ÀÌ  ¸§: "<<cusName<<endl;
 	cout<<"ÀÜ  ¾×: "<<balance<<endl;
 }
+
+Account& Account::operator=(const Account& ref) {
+	accID=ref.accID;
+	balance=ref.balance;
+
+	delete []cusName;
+	cusName=new char[strlen(ref.cusName)+1];
+	strcpy(cusName, ref.cusName);
+	return *this;
+}
