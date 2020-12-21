@@ -1,0 +1,14 @@
+#ifndef __POINT_H__
+#define __POINT_H__
+
+#include <iostream>
+using namespace std;
+
+class Point {
+    int xpos, ypos;
+public:
+    Point(int x=0, int y=0) : xpos(x), ypos(y) { }
+    friend ostream& operator<<(ostream& os, const Point& pos);
+};
+
+#endif
