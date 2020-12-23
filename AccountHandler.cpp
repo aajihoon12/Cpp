@@ -1,15 +1,21 @@
-#include "BankingCommonDec1.h"
+/*
+ * 파일이름: AccountHandler.cpp
+ * 작성자: 윤성우
+ * 업데이트 정보: [2010, 03, 01] 파일버전 0.8 
+ */
+
+#include "BankingCommonDecl.h"
 #include "AccountHandler.h"
 #include "Account.h"
 #include "NormalAccount.h"
 #include "HighCreditAccount.h"
+#include "String.h"
 
 void AccountHandler::ShowMenu(void) const
 {
 	cout<<"-----Menu------"<<endl;
 	cout<<"1. 계좌개설"<<endl;
 	cout<<"2. 입    금"<<endl;
-	
 	cout<<"3. 출    금"<<endl;
 	cout<<"4. 계좌정보 전체 출력"<<endl;
 	cout<<"5. 프로그램 종료"<<endl;
@@ -33,7 +39,7 @@ void AccountHandler::MakeAccount(void)
 void AccountHandler::MakeNormalAccount(void)
 {
 	int id;
-	char name[NAME_LEN];
+	String name;
 	int balance;
 	int interRate;
 
@@ -50,7 +56,7 @@ void AccountHandler::MakeNormalAccount(void)
 void AccountHandler::MakeCreditAccount(void)
 {
 	int id;
-	char name[NAME_LEN];
+	String name;
 	int balance;
 	int interRate;
 	int creditLevel;
@@ -75,7 +81,6 @@ void AccountHandler::MakeCreditAccount(void)
 		accArr[accNum++]=new HighCreditAccount(id, balance, name, interRate, LEVEL_C);
 	}
 }
-
 
 void AccountHandler::DepositMoney(void)
 {

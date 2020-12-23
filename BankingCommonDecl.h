@@ -1,8 +1,9 @@
 /*
-* 파일이름: BankingCommonDecl.h
-* 작성자:윤성우
-* 업데이트 정보: [2010, 01, 01] 파일버전 0.7
-*/
+ * 파일이름: BankingCommonDecl.h
+ * 작성자: 윤성우
+ * 업데이트 정보: [2010, 02, 01] 파일버전 0.8 
+ */
+
 #ifndef __BANKING_COMMON_H__
 #define __BANKING_COMMON_H__
 
@@ -22,4 +23,4 @@ enum {LEVEL_A=7, LEVEL_B=4, LEVEL_C=2};
 // 계좌의 종류
 enum {NORMAL=1, CREDIT=2};
 
-#endif
+#endif;

@@ -1,6 +1,7 @@
-/* 
- * 클래스 이름: Account
- * 클래스 유형: Entity 클래스
+/*
+ * 파일이름: Account.h
+ * 작성자: 윤성우
+ * 업데이트 정보: [2010, 03, 01] 파일버전 0.9 
  */
 
 #ifndef __ACCOUNT_H__
@@ -13,16 +14,12 @@ class Account
 private:
 	int accID; 
 	int balance;    
-	String str; 
-
+	String cusName; // char * cusName;
 public:
-	Account(int ID, int money, char * name);
-
+	Account(int ID, int money, String name);
 	int GetAccID() const;
 	virtual void Deposit(int money);
 	int Withdraw(int money) ;
 	void ShowAccInfo() const ;
-	~Account();
 };
-
 #endif
