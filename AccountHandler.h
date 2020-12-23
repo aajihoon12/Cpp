@@ -1,5 +1,6 @@
 #include "Account.h"
-#include "AccountArray.h"
+#include "BoundCheckArray.h"
+#include "BoundCheckArray.cpp"
 /* 
  * 클래스 이름: AccountHandler
  * 클래스 유형: 컨트롤(Control) 클래스
@@ -8,7 +9,7 @@
 class AccountHandler
 {
 private:
-	AccountArray accArr;
+	BoundCheckArray<Account*> accArr;
 	int accNum;
 public:
 	AccountHandler();
