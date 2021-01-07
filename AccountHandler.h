@@ -23,7 +23,7 @@ public:
 	void WithdrawMoney(void);
 	void ShowAllAccInfo(void) const;
 	~AccountHandler();
-protected:
+protected: //Call By MakeAccount()
 	void MakeNormalAccount(void);
 	void MakeCreditAccount(void);
 };

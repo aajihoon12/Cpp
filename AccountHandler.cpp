@@ -5,7 +5,7 @@
  */
 
 #include "BankingCommonDecl.h"
-#include "AccountHandler.h"
+#include "AccountHandler.h" //#include "BoundCheckArray.h"
 #include "Account.h"
 #include "NormalAccount.h"
 #include "HighCreditAccount.h"
@@ -88,18 +88,25 @@ void AccountHandler::DepositMoney(void)
 	int id;
 	cout<<"[입    금]"<<endl;
 	cout<<"계좌ID: ";	cin>>id;
-	cout<<"입금액: ";	cin>>money;
-	
-	for(int i=0; i<accNum; i++)
-	{
-		if(accArr[i]->GetAccID()==id)
-		{
-			accArr[i]->Deposit(money);
-			cout<<"입금완료"<<endl<<endl;
+	//cout<<"입금액: ";	cin>>money;
+	while(1) {
+		try{
+			for(int i=0; i<accNum; i++)
+			{
+				if(accArr[i]->GetAccID()==id)
+				{
+					cout<<"입금액: "; cin>>money;
+					accArr[i]->Deposit(money);
+					cout<<"입금완료"<<endl<<endl;
+					return;
+				}
+			}
+			cout<<"유효하지 않은 ID 입니다."<<endl<<endl;
 			return;
+		}catch(MinusException& expn) {
+			expn.ShowExceptionReason();
 		}
 	}
-	cout<<"유효하지 않은 ID 입니다."<<endl<<endl;
 }
 
 void AccountHandler::WithdrawMoney(void)
